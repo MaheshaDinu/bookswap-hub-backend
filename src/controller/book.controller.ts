@@ -41,4 +41,23 @@ export const getBookById = (req:Request, res:Response) => {
     }
 }
 
-
+export const updateBook = (req:Request, res:Response) => {
+    try {
+        const bookId = req.params.id;
+        const updatedBook = req.body;
+        const validationError = bookService.validateBook(updatedBook)
+        if (validationError) {
+            res.status(400).json({ message: validationError });
+            return ;
+        }
+        const updated = bookService.updateBook(bookId, updatedBook);
+        if (!updated) {
+            res.status(404).json({ message: "Book not found" });
+            return;
+        }
+        res.status(200).json(updated);
+    }catch (error) {
+        console.log(error)
+        res.status(500).json({ message: error.message });
+    }
+}
