@@ -61,3 +61,33 @@ export const updateBook = (req:Request, res:Response) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const deleteBook = (req:Request, res:Response) => {
+    try {
+        const bookId = req.params.id;
+        const deleted = bookService.deleteBook(bookId);
+        if (!deleted) {
+            res.status(404).json({ message: "Book not found" });
+            return;
+        }
+        res.status(200).json({ message: "Book deleted successfully" });
+    }catch (error) {
+        console.log(error)
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const getBooksByUserId = (req:Request, res:Response) => {
+    try {
+        const userId = req.params.id;
+        const books = bookService.getBooksByUserId(userId);
+        if (!books) {
+            res.status(404).json({ message: "User do not have books" });
+            return;
+        }
+        res.status(200).json(books);
+    }catch (error) {
+        console.log(error)
+        res.status(500).json({ message: error.message });
+    }
+}
