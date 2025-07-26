@@ -3,10 +3,8 @@ import {getNextUserId, userList} from "../db/db";
 
 export const createUser = (newUser: Omit<User, "id" | "createdAt" | "updatedAt">) =>
 {
-    try {
-        if (!validateUser(newUser)) {
-            throw new Error("Invalid user data");
-        }
+
+
         const user: User = {
             id: getNextUserId(),
             name: newUser.name,
@@ -22,49 +20,29 @@ export const createUser = (newUser: Omit<User, "id" | "createdAt" | "updatedAt">
         userList.push(user)
         const { password, ...userWithoutPassword } = user; // Exclude password from the returned object for security
         return userWithoutPassword as User;
-    }catch (error) {
-        if (error instanceof Error) {
-            console.log(error)
-            throw new Error(error.message);
-        }else {
-            throw new Error("An unknown error occurred");
-        }
-    }
+
 }
 
 export const getAllUsers = ():Omit<User, "password">[] => {
-    try {
+
         return userList.map((({password, ...user})=> user));
-    }catch (error) {
-        if (error instanceof Error) {
-            console.log(error)
-            throw new Error(error.message);
-        }else {
-            throw new Error("An unknown error occurred");
-        }
-    }
+
+
 }
 
 export const getUserById = (userId: number):Omit<User, "password"> | null => {
-    try {
+
         const user = userList.find(user => user.id == userId);
         if (!user){
             return null;
         }
         const {password, ...userWithoutPassword} = user;
         return userWithoutPassword as Omit<User, "password">;
-    }catch (error) {
-        if (error instanceof Error) {
-            console.log(error)
-            throw new Error(error.message);
-        }else {
-            throw new Error("An unknown error occurred");
-        }
-    }
+
 }
 
 export const updateUser = (userId: number, updatedUserData: Partial<User>):Omit<User, "password"> | null => {
-    try {
+
         const userIndex = userList.findIndex(user => user.id == userId);
         if (userIndex === -1) {
             return null;
@@ -78,19 +56,12 @@ export const updateUser = (userId: number, updatedUserData: Partial<User>):Omit<
         userList[userIndex] = updatedUser;
         const {password, ...userWithoutPassword} = updatedUser;
         return userWithoutPassword as Omit<User, "password">;
-    } catch (error) {
-        if (error instanceof Error) {
-            console.log(error)
-            throw new Error(error.message);
-        }else {
-            throw new Error("An unknown error occurred");
-        }
-    }
+
 
 }
 
 export const deleteUser = (userId: number) :Omit<User, "password"> | null => {
-    try {
+
         const userIndex = userList.findIndex(user => user.id === userId);
         if (userIndex === -1) {
             return null;
@@ -98,14 +69,7 @@ export const deleteUser = (userId: number) :Omit<User, "password"> | null => {
         const [deletedUser] = userList.splice(userIndex, 1);
         const { password, ...userWithoutPassword } = deletedUser;
         return userWithoutPassword as User;
-    } catch (error) {
-        if (error instanceof Error) {
-            console.log(error)
-            throw new Error(error.message);
-        }else {
-            throw new Error("An unknown error occurred");
-        }
-    }
+
 }
 
 
