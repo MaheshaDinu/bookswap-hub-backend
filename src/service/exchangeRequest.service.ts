@@ -106,11 +106,11 @@ export const updateExchangeRequestStatus = (
         return "Requested book not found for this exchange request.";
     }
 
-    if (newStatus === 'accepted' || newStatus === 'rejected') {
+    if (newStatus === RequestStatus.ACCEPTED || newStatus === RequestStatus.DECLINED) {
         if (requestedBook.ownerId !== currentUserId) {
             return "Only the owner of the requested book can accept or reject this request.";
         }
-    } else if (newStatus === 'completed') {
+    } else if (newStatus === RequestStatus.COMPLETED) {
         if (requestedBook.ownerId !== currentUserId && request.requester_id !== currentUserId) {
             return "Only the requester or the owner of the requested book can mark this request as completed.";
         }
@@ -118,13 +118,13 @@ export const updateExchangeRequestStatus = (
 
 
     // Logic for status transitions (optional but good practice)
-    if (newStatus === 'accepted' && request.status !== 'pending') {
+    if (newStatus === RequestStatus.ACCEPTED && request.status !== RequestStatus.PENDING) {
         return "Only pending requests can be accepted.";
     }
-    if (newStatus === 'rejected' && request.status !== 'pending') {
+    if (newStatus === RequestStatus.DECLINED && request.status !== RequestStatus.PENDING) {
         return "Only pending requests can be rejected.";
     }
-    if (newStatus === 'completed' && request.status !== 'accepted') {
+    if (newStatus === RequestStatus.COMPLETED && request.status !== RequestStatus.ACCEPTED) {
         return "Only accepted requests can be marked as completed.";
     }
 
@@ -133,7 +133,7 @@ export const updateExchangeRequestStatus = (
     request.updatedAt = new Date();
 
     // Side effects (in a real app, this is where you'd change book availability, ownership, etc.)
-    if (newStatus === 'accepted') {
+    if (newStatus === RequestStatus.ACCEPTED) {
         // Mark both books as unavailable if it's a 1:1 swap, or just the requested book
         if (requestedBook) requestedBook.isAvailable = false;
         if (request.offered_book_id) {
@@ -141,14 +141,14 @@ export const updateExchangeRequestStatus = (
             if (offeredBook) offeredBook.isAvailable = false;
         }
         // In a real app, you might also automatically reject other pending requests for these books
-    } else if (newStatus === 'rejected') {
+    } else if (newStatus === RequestStatus.DECLINED) {
         // If rejected, ensure books go back to available if they were marked otherwise
         if (requestedBook) requestedBook.isAvailable = true; // Assume it was still available if pending
         if (request.offered_book_id) {
             const offeredBook = booksList.find(b => b.id === request.offered_book_id);
             if (offeredBook) offeredBook.isAvailable = true;
         }
-    } else if (newStatus === 'completed') {
+    } else if (newStatus === RequestStatus.COMPLETED) {
         // This is where actual book ownership swap would occur
         // For in-memory, we can simulate this, or just mark them as completed
         // For example:
