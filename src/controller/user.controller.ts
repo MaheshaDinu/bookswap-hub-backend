@@ -62,7 +62,7 @@ export const updateUser = (req: Request, res: Response) => {
             return res.status(400).json({ message: "Invalid User ID." });
         }
         const updatedUserData = req.body;
-        const validationError = userService.validateUser(updatedUserData, false); // false for update validation
+        const validationError = userService.validateUser(updatedUserData, false, userId); // false for update validation
         if (validationError) {
             return res.status(400).json({ message: validationError });
         }

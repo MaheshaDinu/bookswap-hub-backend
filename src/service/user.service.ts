@@ -30,16 +30,15 @@ export const getAllUsers = ():Omit<User, "password">[] => {
 
 }
 
-export const getUserById = (userId: number):Omit<User, "password"> | null => {
+export const getUserById = (userId: number): Omit<User, 'password'> | null => {
+    const user = userList.find(user => user.id === userId);
+    if (!user) {
+        return null;
+    }
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword as User;
+};
 
-        const user = userList.find(user => user.id == userId);
-        if (!user){
-            return null;
-        }
-        const {password, ...userWithoutPassword} = user;
-        return userWithoutPassword as Omit<User, "password">;
-
-}
 
 export const updateUser = (userId: number, updatedUserData: Partial<User>):Omit<User, "password"> | null => {
 
@@ -73,7 +72,7 @@ export const deleteUser = (userId: number) :Omit<User, "password"> | null => {
 }
 
 
-export const validateUser = (user: Partial<User>, isNewUser: boolean = false): string | null => {
+export const validateUser = (user: Partial<User>, isNewUser: boolean = false, currentUserId?: number): string | null => {
     if (isNewUser) {
         if (!user.name || typeof user.name !== 'string' || user.name.trim().length === 0) {
             return "Name is required and must be a non-empty string.";
@@ -89,7 +88,7 @@ export const validateUser = (user: Partial<User>, isNewUser: boolean = false): s
             return "Email already exists.";
         }
     } else { // For updates
-        if (user.email && userList.some(u => u.email === user.email && u.id !== user.id)) {
+        if (user.email && userList.some(u => u.email === user.email && u.id !== currentUserId)) {
             return "Email already exists for another user.";
         }
     }
