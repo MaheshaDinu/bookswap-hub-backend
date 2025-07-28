@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import {User} from "../models/user.model";
 import {userList} from "../db/db";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
