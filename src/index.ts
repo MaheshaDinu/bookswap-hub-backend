@@ -1,6 +1,9 @@
 
 import dotenv from 'dotenv';
 import app from "./app";
+import DBConnection from "./db/DBConnection";
+
+DBConnection().then(result => console.log(result));
 
 dotenv.config()
 
